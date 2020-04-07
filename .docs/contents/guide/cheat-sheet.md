@@ -51,6 +51,54 @@ Appsettings.app(new string[] { "AppSettings", "RedisCachingAOP", "Enabled" })
 ```
 
 
+
+## AspNetCoreRateLimit
+
+系统使用 `AspNetCoreRateLimit` 组件来实现ip限流：
+1、添加 `nuget` 包：
+```
+<PackageReference Include="AspNetCoreRateLimit" Version="3.0.5" />
+```
+
+2、注入服务 `IpPolicyRateLimitSetup.cs`
+```
+services.AddIpPolicyRateLimitSetup(Configuration);
+```
+
+3、配置中间件
+```
+ // Ip限流,尽量放管道外层
+ app.UseIpRateLimiting();
+```
+
+4、配置数据  
+
+具体的内容，自行百度即可
+```
+  "IpRateLimiting": {
+    "EnableEndpointRateLimiting": true,
+    "StackBlockedRequests": false,
+    "RealIpHeader": "X-Real-IP",
+    "ClientIdHeader": "X-ClientId",
+    "HttpStatusCode": 429,//返回状态码
+    "GeneralRules": [//规则,结尾一定要带*
+      {
+        "Endpoint": "*",
+        "Period": "1m",
+        "Limit": 120
+      },
+      {
+        "Endpoint": "*:/api/blog*",
+        "Period": "1m",
+        "Limit": 30
+      }
+    ]
+
+  }
+```
+
+
+
 ## Async-Await 
 
 整个系统采用 async/await 异步编程，符合主流的开发模式，   
@@ -345,6 +393,7 @@ models = _mapper.Map<BlogViewModels>(blogArticle);
 精力有限，还是更新中...   
 如果你愿意帮忙，可以直接在GitHub中，提交pull request，   
 我会在后边的贡献者页面里，列出你的名字和项目地址做推广
+
 ## Log4 
 
 精力有限，还是更新中...   
